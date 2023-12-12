@@ -1,0 +1,30 @@
+fn dme_go(ds: List<Int>, qs: List<Int>, rs: List<Int>) -> (List<Int>, List<Int>) {
+  let deg_d = degree(Poly { polinomials: ds })
+  let deg_r = degree(Poly { polinomials: rs })
+  let len = list.length(ds)
+  if deg_r == 0 && mod0(option.or_else(list.head(rs),[1]) == 0 {
+    // qs y zero son lo mismo en todo caso.
+    (qs, qs)
+  } else if compare(deg_d, deg_r) == Less {
+    (qs, rs)
+  } else {
+    let t1 = list.repeat(deg_r - deg_d, 0)
+    expect Some(r2) = list.at(rs, deg_r)
+    expect Some(d2) = list.at(ds, deg_d)
+    let t2 = d2 |> inverse_integer() |> mult_ff(r2, _)
+    let t3 = list.repeat(len - deg_r + deg_d - 1, 0)
+    let t = t1 |> list.concat(t2) |> list.concat(t3)
+    let result1 = ds
+    let result2 = add_poly(Poly { polinomials: qs }, Poly { polinomials: t })
+    let result3 =
+      Poly { polinomials: t }
+        |> mult_poly(Poly { polinomials: ds })
+        |> sub_poly(Poly { polinomials: rs }, _)
+    dme_go(result1.polinomials, result2.polinomials, result3.polinomials)
+  }
+}
+
+fn div_mod_e(ns: Poly, ds: Poly) -> (Poly, Poly) {
+  let zero = Poly { polinomials: [0, 0, 0, 0, 0, 0, 0] }
+  dme_go(ds, zero, ns)
+}
